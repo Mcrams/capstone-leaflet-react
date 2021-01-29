@@ -6,9 +6,15 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.2",
+    "bootstrap": "^4.6.0",
+    "leaflet": "^1.7.1",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.3",
     "react-dom": "^17.0.1",
+    "react-leaflet": "^3.0.5",
+    "react-leaflet-location-picker": "^1.4.2",
     "react-scripts": "4.0.1",
+    "typescript": "^4.1.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -34,5 +40,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.5.21"
   }
 }
