@@ -1,0 +1,33 @@
+{
+  "type":"FeatureCollection",
+  "features":[
+    {
+      "type":"Feature",
+      "properties": {
+        "name":"Room 122",
+        "roomCapacity":10,
+        "currentCapacity":5,
+        "riskCalc":1.5,
+        "flipC":[[[89.85,78.86],[123.27,78.86],[123.27,82.44],[89.98,82.44],[89.85,78.86]]]
+      },
+      "geometry": {
+        "type":"Polygon",
+        "coordinates":[[[78.86,89.85],[78.86,123.27],[82.44,123.27],[82.44,89.98],[78.86,89.85]]]
+      }
+    },
+    {
+      "type":"Feature",
+      "properties": {
+        "name":"Room 135",
+        "roomCapacity":9,
+        "currentCapacity":5,
+        "riskCalc":1.5,
+        "flipC":[[[127.95,81.37],[127.90,78.86],[154.46,78.86],[154.46,81.38],[127.95,81.37]]]
+      },
+      "geometry": {
+        "type":"Polygon",
+        "coordinates":[[[81.37,127.95],[78.86,127.90],[78.86,154.46],[81.38,154.46],[81.37,127.95]]]
+      }
+    }
+  ]
+}

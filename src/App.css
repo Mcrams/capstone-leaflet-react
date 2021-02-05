@@ -1,7 +1,9 @@
 /* Import Leaflet-specific CSS */
 @import url("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css");
+@import url('@elastic/eui/dist/eui_theme_amsterdam_light.css');
 
 .leaflet-container {
   height: 600px;
-  width: 100%;
+  width: 80%;
+  margin: auto;
 }

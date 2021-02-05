@@ -1,8 +1,85 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { useState } from 'react';
 import './App.css'
-import { MapContainer, TileLayer, Marker, Popup, ImageOverlay, useMapEvents} from 'react-leaflet'
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  ImageOverlay,
+  Polygon,
+  GeoJSON,
+  FeatureGroup,
+  useMapEvent,
+  useMapEvents
+} from 'react-leaflet'
 
+
+import {
+  EuiButton,
+} from '@elastic/eui';
+
+import ModalExample from "./modal.js"
+
+//// TODO:
+
+//Import JSON file
+const roomData = require('./geojson.json');
+
+function AddMarkerToClick() {
+  const [markers, setMarkers] = useState([]);
+  const map = useMapEvents({
+    click(e) {
+      const newMarker = e.latlng;
+      setMarkers([...markers, newMarker]);
+    },
+  })
+  return (
+    <>
+      {markers.map(marker =>
+        <Marker position={marker}>
+          <Popup><pre>{JSON.stringify({marker}, null, 2)}</pre></Popup>
+        </Marker>
+      )}
+    </>
+  )
+}
+
+function DisplayGeoJSONData() {
+  const [modal, setModal] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState({});
+
+  const toggle = () => setModal(!modal);
+
+  return (
+  <>
+  {roomData.features.map((feature, index) => {
+    return (
+      <FeatureGroup key={index}>
+        <Popup>
+          <p>{feature.properties.name}</p>
+          <EuiButton id="button"
+          onClick={() => {
+            toggle(true);
+            setSelectedFeature(feature);
+          }}
+          >
+          More Info
+          </EuiButton>
+        </Popup>
+        <Polygon
+          positions={feature.geometry.coordinates}
+        />
+        <ModalExample
+        modal={modal}
+        toggle={toggle}
+        selectedFeature={selectedFeature}
+        />
+      </FeatureGroup>
+    );
+  })}
+  </>
+  );
+}
 
 class GlobalMap extends React.Component {
   constructor(props) {
@@ -23,11 +100,7 @@ class GlobalMap extends React.Component {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
-      <Popup>
-        A pretty CSS3 popup. <br /> Easily customizable.
-      </Popup>
-      </Marker>
+        <AddMarkerToClick />
       </MapContainer>
     );
   }
@@ -43,10 +116,17 @@ class LocalMap extends React.Component {
     };
   }
 
+  /*onEachFeature(feature, layer) {
+  	const func = (e)=>{console.log("Click")};
+    layer.bindPopup(feature.properties.name);
+  	layer.on({
+    	click: func
+    });
+  }*/
 
   render() {
 
-    let mapBounds = [[0,0],[330,255]];
+    let mapBounds = this.state.bounds;
 
     return (
       <MapContainer zoom={-5} bounds={mapBounds} onClick={this.handleClick}>
@@ -55,17 +135,19 @@ class LocalMap extends React.Component {
         bounds={mapBounds}
         zoom={0}
         />
+        <DisplayGeoJSONData />
       </MapContainer>
     );
   }
 
 }
 
-
 function App() {
   return (
-    <div class="leaflet-container">
-      <GlobalMap />
+    <div>
+      <div class="leaflet-container">
+        <LocalMap />
+      </div>
     </div>
   );
 }
