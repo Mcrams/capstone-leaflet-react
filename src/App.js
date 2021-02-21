@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css'
+import Login from './loginComponents/login';
+import Dashboard from './loginComponents/dashboard';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import {
   MapContainer,
   TileLayer,
@@ -13,14 +16,12 @@ import {
   useMapEvents
 } from 'react-leaflet'
 
-
 import {
   EuiButton,
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
 
-//// TODO:
 
 //Import JSON file
 const roomData = require('./geojson.json');
@@ -129,6 +130,7 @@ class LocalMap extends React.Component {
     let mapBounds = this.state.bounds;
 
     return (
+      <div class="leaflet-container">
       <MapContainer zoom={-5} bounds={mapBounds} onClick={this.handleClick}>
         <ImageOverlay
         url="https://uc62d6bb72d0e7ec24df2d74cafa.previews.dropboxusercontent.com/p/thumb/ABA07uCU0RsAGwAhJ74wEmu6o7K3voc8XuQc3TPIEPoEbiRg_uD7YiI-PZB4d8PHWA_RRsDUL5u3Vua-3nN2mPdK1j9iXcBEEdx8otsp3Ss775zOgTpM429e6SD169_k2H3dgOJqjjSZBybZ_TjM8vNYdkYncVcRQw4lUlHtE3kIgMBtk4cHyAFEH-w--bkXUWK75xX_8B_uqs5YeM6oDLamoXtMI-rznNxyFYxJTkNxkkQjeyxDvS4Nbaw1u61hAz6y8L-T0lqiMfl2LYxxvNGBHnNLE566hB01dSpSYA8p7DKCdsKgPQmIWHyaBhuFv4kdo3YIXvt1OzOXoSxw75M57gyVlnmXWY7FenfDSLnV1p3MhKa4IGgONiyTWbHRHc6gSC7LkVsmEUZmPLqzWb10/p.jpeg?fv_content=true&size_mode=5"
@@ -137,6 +139,8 @@ class LocalMap extends React.Component {
         />
         <DisplayGeoJSONData />
       </MapContainer>
+      </div>
+      
     );
   }
 
@@ -144,10 +148,12 @@ class LocalMap extends React.Component {
 
 function App() {
   return (
-    <div>
-      <div class="leaflet-container">
-        <LocalMap />
-      </div>
+    <div >
+      <Switch>
+      <Route path="/" component={LocalMap} exact />
+      <Route path="/login" component={Login} />
+      <Route path="/dashboard" component={Dashboard} />
+      </Switch>
     </div>
   );
 }

@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "json-query": "^2.2.2",
     "leaflet": "^1.7.1",
@@ -18,6 +19,7 @@
     "react-dom": "^17.0.1",
     "react-leaflet": "^3.0.5",
     "react-leaflet-location-picker": "^1.4.2",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "typescript": "^4.1.3",
     "web-vitals": "^0.2.4"
