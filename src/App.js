@@ -3,6 +3,8 @@ import './App.css'
 import Login from './loginComponents/login';
 import Dashboard from './loginComponents/dashboard';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import axios from 'axios'
+
 import {
   MapContainer,
   TileLayer,
@@ -13,11 +15,15 @@ import {
   GeoJSON,
   FeatureGroup,
   useMapEvent,
-  useMapEvents
+  useMapEvents,
 } from 'react-leaflet'
 
 import {
   EuiButton,
+  EuiPage,
+  EuiPageSideBar,
+  EuiText,
+  EuiTitle,
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
@@ -26,23 +32,29 @@ import ModalExample from "./modal.js"
 //Import JSON file
 const roomData = require('./geojson.json');
 
-function AddMarkerToClick() {
-  const [markers, setMarkers] = useState([]);
-  const map = useMapEvents({
-    click(e) {
-      const newMarker = e.latlng;
-      setMarkers([...markers, newMarker]);
-    },
-  })
+const GetData = (props) => {
+
+  const [buildings,setBuildings] = useState([]);
+
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url:`https://engo500.herokuapp.com/building`
+  }).then(res => setBuildings(res.data))
+  }, [])
+
   return (
-    <>
-      {markers.map(marker =>
-        <Marker position={marker}>
-          <Popup><pre>{JSON.stringify({marker}, null, 2)}</pre></Popup>
-        </Marker>
-      )}
-    </>
+     buildings.map(points => <Marker position={[points.lat,points.lon]} riseOnHover="true">
+        <Popup>
+         Name: {points.Name} <br /><br />
+         <EuiButton onClick={() => {
+           props.changeView(); 
+           props.globalToLocal(points.floorplans)
+           }}>View</EuiButton>
+       </Popup>
+     </Marker>)
   )
+
 }
 
 function DisplayGeoJSONData() {
@@ -82,75 +94,86 @@ function DisplayGeoJSONData() {
   );
 }
 
-class GlobalMap extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      centerLat: 51.0447,
-      centerLon:-114.0719
-    };
-  }
 
-  render() {
 
-    let position = [this.state.centerLat, this.state.centerLon];
 
-    return (
-      <MapContainer center={position} zoom={13}>
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <AddMarkerToClick />
-      </MapContainer>
-    );
-  }
 
-}
+let DisplayMap = () => {
 
-class LocalMap extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      bounds: [[0,0],[330,255]],
-      markerCoords:[100,100]
-    };
-  }
+  const [mapState,setMap] = useState(false);
+  const [Url,setUrl] = useState('');
+  let position = [51.0447,-114.0719]
+  let mapBounds =  [[0,0],[330,255]];
 
-  /*onEachFeature(feature, layer) {
-  	const func = (e)=>{console.log("Click")};
-    layer.bindPopup(feature.properties.name);
-  	layer.on({
-    	click: func
-    });
-  }*/
+  const globalToLocal = (index) => { 
+    setUrl(index);
+  };
+  
+  return (
+    <EuiPage>
+    <EuiPageSideBar>
+      <EuiTitle><h3>ENGO 500 Capstone</h3></EuiTitle>
+      <EuiText>
+      <EuiButton id="button" onClick={() => {}}>Log in or Register</EuiButton>
 
-  render() {
-
-    let mapBounds = this.state.bounds;
-
-    return (
-      <div class="leaflet-container">
-      <MapContainer zoom={-5} bounds={mapBounds} onClick={this.handleClick}>
+      <br/><br/>
+      {mapState
+      ? <EuiButton id="toggleMap" onClick={() => setMap(false)}>Close Local Map</EuiButton>
+      : <></>
+      }
+      </EuiText>
+    </EuiPageSideBar>
+      {mapState
+      ?<div class="leaflet-container">
+      <MapContainer zoom={-5} bounds={mapBounds}>
         <ImageOverlay
-        url="https://uc62d6bb72d0e7ec24df2d74cafa.previews.dropboxusercontent.com/p/thumb/ABA07uCU0RsAGwAhJ74wEmu6o7K3voc8XuQc3TPIEPoEbiRg_uD7YiI-PZB4d8PHWA_RRsDUL5u3Vua-3nN2mPdK1j9iXcBEEdx8otsp3Ss775zOgTpM429e6SD169_k2H3dgOJqjjSZBybZ_TjM8vNYdkYncVcRQw4lUlHtE3kIgMBtk4cHyAFEH-w--bkXUWK75xX_8B_uqs5YeM6oDLamoXtMI-rznNxyFYxJTkNxkkQjeyxDvS4Nbaw1u61hAz6y8L-T0lqiMfl2LYxxvNGBHnNLE566hB01dSpSYA8p7DKCdsKgPQmIWHyaBhuFv4kdo3YIXvt1OzOXoSxw75M57gyVlnmXWY7FenfDSLnV1p3MhKa4IGgONiyTWbHRHc6gSC7LkVsmEUZmPLqzWb10/p.jpeg?fv_content=true&size_mode=5"
-        bounds={mapBounds}
-        zoom={0}
+          url = {Url[0].floorplanImage}
+          bounds={mapBounds}
+          zoom={0}
         />
         <DisplayGeoJSONData />
       </MapContainer>
       </div>
-      
-    );
-  }
+      :<MapContainer center={position} zoom={13}>
+        <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+        <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
+      </MapContainer>
+      }
+    </EuiPage>
+  )
+
+  // if (mapState === false) {
+  // return (
+  //   <MapContainer center={position} zoom={13}>
+  //     <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+  //     <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
+  //   </MapContainer>
+  // );
+  // }
+  // return (
+  //   <div class="leaflet-container">
+  //   <MapContainer zoom={-5} bounds={mapBounds}>
+  //     <ImageOverlay
+  //     url = {Url[0].floorplanImage}
+  //     bounds={mapBounds}
+  //     zoom={0}
+  //     />
+  //     <DisplayGeoJSONData />
+  //   </MapContainer>
+  //   </div>
+    
+  // );
+
+
 
 }
+
 
 function App() {
   return (
     <div >
       <Switch>
-      <Route path="/" component={LocalMap} exact />
+      <Route path="/" component={DisplayMap} exact />
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
       </Switch>
