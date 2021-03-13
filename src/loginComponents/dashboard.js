@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import axios from 'axios'
+import axios from 'axios';
+import MapModal from './modalMapDraw';
 import '@elastic/eui/dist/eui_theme_light.css';
 import {
     EuiPage,
@@ -20,14 +21,18 @@ import {
 
 const Dashboard = () => {
 
+    //Polymap States
+    const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
+    const toggle = () => setIsFlyoutVisible(!isFlyoutVisible);
+    const [roomPoly, setRoomPoly] = useState([]);
 
     //User States
     const [token,setToken] = useState('')
     const [userID,setUserID] = useState('')
     const [allBuildings,setallBuildings] = useState([])
     //Building States
-    const [newlat, setNewLat] = useState('') 
-    const [newlong, setNewLong] = useState('') 
+    const [newlat, setNewLat] = useState('')
+    const [newlong, setNewLong] = useState('')
     const [newBuilding, setNewBuilding] = useState('')
     const [buildingM, setbuildingM] = useState('')
 
@@ -61,6 +66,8 @@ const Dashboard = () => {
       }
     },[userID,buildingM])
 
+    //Polymap store function
+    const polyCoords = (index) => {      setRoomPoly(index);   };
 
     //Building select options
     const options = allBuildings.map(building => { return {value: building._id, text: building.Name} });
@@ -73,7 +80,7 @@ const Dashboard = () => {
         axios({
             method: 'post',
             url:'https://engo500.herokuapp.com/building',
-            headers: {'auth-token': token}, 
+            headers: {'auth-token': token},
             data: {
               userID: userID,
               name: newBuilding,
@@ -105,7 +112,7 @@ const Dashboard = () => {
         method: 'post',
         url:'https://engo500.herokuapp.com/floorplan',
         data: send,
-        headers: {'auth-token': token,'Content-Type': 'multipart/form-data'}, 
+        headers: {'auth-token': token,'Content-Type': 'multipart/form-data'},
     }).then(res => {
         setfpM('success')
         setFiles({})
@@ -123,7 +130,7 @@ const createRoom = (event) => {
     axios({
         method: 'post',
         url:'https://engo500.herokuapp.com/room',
-        headers: {'auth-token': token}, 
+        headers: {'auth-token': token},
         data: {
           roomNumber: roomN,
           floorplanID : roption,
@@ -218,7 +225,7 @@ const createRoom = (event) => {
               multiple
               initialPromptText="Select or drag and drop a floor plan file"
               onChange={(files) => {setFiles(files)}}
-            
+
             />
              <EuiSpacer></EuiSpacer>
             <EuiButton type="submit" fill>Create Floor Plan</EuiButton>
@@ -272,13 +279,28 @@ const createRoom = (event) => {
                     onChange={(e) => seth(e.target.value)}
                 />
             <EuiSpacer></EuiSpacer>
+
+            <EuiButton id="roomButton" onClick={() => {
+              toggle();
+            }}>Draw Room Coordinates</EuiButton>
+
+            <MapModal
+            visibility={isFlyoutVisible}
+            toggle={toggle}
+            polyCoords={polyCoords}
+            onPolyConfirm={() => {setcoords(roomPoly)}}
+            />
+
+            <EuiSpacer></EuiSpacer>
+
             <EuiFieldText
                     placeholder="Room Coordinates"
                     fullWidth
                     value={coords}
-                    onChange={(e) => setcoords(e.target.value)}
-                />
+            />
+
             <EuiSpacer></EuiSpacer>
+
             <EuiButton type="submit" fill>Create Room</EuiButton>
             </EuiForm>
             </EuiCard>
@@ -289,7 +311,7 @@ const createRoom = (event) => {
         </EuiPageBody>
         </EuiPage>
         </>
-    
+
     )
 
 }

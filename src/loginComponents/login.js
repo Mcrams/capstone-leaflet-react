@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import axios from 'axios'
 import '@elastic/eui/dist/eui_theme_light.css';
@@ -19,9 +18,9 @@ import {
 
 
    const LoginState = () =>{
-    const [newUsername, setNewUsername] = useState('') 
-    const [newPassowrd, setNewPassword] = useState('') 
-    const [message, setM] = useState('') 
+    const [newUsername, setNewUsername] = useState('')
+    const [newPassowrd, setNewPassword] = useState('')
+    const [message, setM] = useState('')
     const [lors,setlors] = useState("signup");
 
     const history = useHistory();
@@ -48,7 +47,7 @@ import {
             setTimeout(()=>setM(''),3000)
           })
     }
-    
+
     const loginf = (event) => {
         event.preventDefault();
         axios({
@@ -72,7 +71,7 @@ import {
           })
 
     }
-    
+
     if(lors === "signup") {
         return (
             <EuiCard style={{maxWidth:'600px', justifyContent:'center',}}>
@@ -146,7 +145,7 @@ import {
 
 const Login = () => {
 
-    
+
 
     return (
         <>
@@ -158,7 +157,7 @@ const Login = () => {
         </EuiPageBody>
         </EuiPage>
         </>
-    
+
     )
 
 }

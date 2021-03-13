@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import axios from 'axios'
 
 import {
-  MapContainer,
+  Map,
   TileLayer,
   Marker,
   Popup,
@@ -24,6 +24,7 @@ import {
   EuiPageSideBar,
   EuiText,
   EuiTitle,
+  EuiSpacer
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
@@ -48,7 +49,7 @@ const GetData = (props) => {
         <Popup>
          Name: {points.Name} <br /><br />
          <EuiButton onClick={() => {
-           props.changeView(); 
+           props.changeView();
            props.globalToLocal(points.floorplans)
            }}>View</EuiButton>
        </Popup>
@@ -105,10 +106,10 @@ let DisplayMap = () => {
   let position = [51.0447,-114.0719]
   let mapBounds =  [[0,0],[330,255]];
 
-  const globalToLocal = (index) => { 
+  const globalToLocal = (index) => {
     setUrl(index);
   };
-  
+
   return (
     <EuiPage>
     <EuiPageSideBar>
@@ -116,7 +117,7 @@ let DisplayMap = () => {
       <EuiText>
       <EuiButton id="button" onClick={() => {}}>Log in or Register</EuiButton>
 
-      <br/><br/>
+      <EuiSpacer></EuiSpacer>
       {mapState
       ? <EuiButton id="toggleMap" onClick={() => setMap(false)}>Close Local Map</EuiButton>
       : <></>
@@ -125,19 +126,19 @@ let DisplayMap = () => {
     </EuiPageSideBar>
       {mapState
       ?<div class="leaflet-container">
-      <MapContainer zoom={-5} bounds={mapBounds}>
+      <Map zoom={15} bounds={mapBounds}>
         <ImageOverlay
           url = {Url[0].floorplanImage}
           bounds={mapBounds}
-          zoom={0}
+          zoom={15}
         />
         <DisplayGeoJSONData />
-      </MapContainer>
+      </Map>
       </div>
-      :<MapContainer center={position} zoom={13}>
+      :<Map center={position} zoom={13}>
         <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
         <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
-      </MapContainer>
+      </Map>
       }
     </EuiPage>
   )
@@ -161,7 +162,7 @@ let DisplayMap = () => {
   //     <DisplayGeoJSONData />
   //   </MapContainer>
   //   </div>
-    
+
   // );
 
 

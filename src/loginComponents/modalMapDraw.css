@@ -1,0 +1,19 @@
+/* Import Leaflet-specific CSS */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css");
+
+.sr-only {
+   display: none;
+}
+
+
+#flyMapContainer {
+  z-index: -1;
+}
+
+.buttonWrapper {
+  z-index: 2;
+  position: absolute;
+  /* left: 0px;
+  top: 0px; */
+  /* transform: translateX(50px); */
+}
