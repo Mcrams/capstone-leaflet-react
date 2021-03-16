@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css'
 import Login from './loginComponents/login';
 import Dashboard from './loginComponents/dashboard';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import axios from 'axios'
 
 import {
@@ -49,7 +49,7 @@ const GetData = (props) => {
          Name: {points.Name} <br /><br />
          <EuiButton onClick={() => {
            props.changeView(); 
-           props.globalToLocal(points.floorplans)
+           props.globalToLocal(points)
            }}>View</EuiButton>
        </Popup>
      </Marker>)
@@ -57,19 +57,20 @@ const GetData = (props) => {
 
 }
 
-function DisplayGeoJSONData() {
+function DisplayGeoJSONData(props) {
   const [modal, setModal] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState({});
 
   const toggle = () => setModal(!modal);
 
+  const room = props.room;
   return (
   <>
-  {roomData.features.map((feature, index) => {
+  {room.map((feature, index) => {
     return (
       <FeatureGroup key={index}>
         <Popup>
-          <p>{feature.properties.name}</p>
+          <p>{feature.roomNumber}</p>
           <EuiButton id="button"
           onClick={() => {
             toggle(true);
@@ -80,7 +81,7 @@ function DisplayGeoJSONData() {
           </EuiButton>
         </Popup>
         <Polygon
-          positions={feature.geometry.coordinates}
+          positions={feature.flipC}
         />
         <ModalExample
         modal={modal}
@@ -108,13 +109,15 @@ let DisplayMap = () => {
   const globalToLocal = (index) => { 
     setUrl(index);
   };
+
+  const history = useHistory();
   
   return (
     <EuiPage>
     <EuiPageSideBar>
       <EuiTitle><h3>ENGO 500 Capstone</h3></EuiTitle>
       <EuiText>
-      <EuiButton id="button" onClick={() => {}}>Log in or Register</EuiButton>
+      <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
 
       <br/><br/>
       {mapState
@@ -127,11 +130,11 @@ let DisplayMap = () => {
       ?<div class="leaflet-container">
       <MapContainer zoom={-5} bounds={mapBounds}>
         <ImageOverlay
-          url = {Url[0].floorplanImage}
+          url = {Url.floorplans[0].floorplanImage}
           bounds={mapBounds}
-          zoom={0}
+          zoom={10}
         />
-        <DisplayGeoJSONData />
+        <DisplayGeoJSONData room={Url.floorplans[0].rooms} />
       </MapContainer>
       </div>
       :<MapContainer center={position} zoom={13}>
@@ -141,29 +144,6 @@ let DisplayMap = () => {
       }
     </EuiPage>
   )
-
-  // if (mapState === false) {
-  // return (
-  //   <MapContainer center={position} zoom={13}>
-  //     <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-  //     <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
-  //   </MapContainer>
-  // );
-  // }
-  // return (
-  //   <div class="leaflet-container">
-  //   <MapContainer zoom={-5} bounds={mapBounds}>
-  //     <ImageOverlay
-  //     url = {Url[0].floorplanImage}
-  //     bounds={mapBounds}
-  //     zoom={0}
-  //     />
-  //     <DisplayGeoJSONData />
-  //   </MapContainer>
-  //   </div>
-    
-  // );
-
 
 
 }
