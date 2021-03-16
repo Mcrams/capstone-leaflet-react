@@ -7,7 +7,6 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiOverlayMask,
-  EuiText,
 } from '@elastic/eui';
 
 

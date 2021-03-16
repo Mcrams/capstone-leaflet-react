@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import axios from 'axios'
 
 import {
-  MapContainer,
+  Map,
   TileLayer,
   Marker,
   Popup,
@@ -24,6 +24,7 @@ import {
   EuiPageSideBar,
   EuiText,
   EuiTitle,
+  EuiSpacer
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
@@ -106,7 +107,7 @@ let DisplayMap = () => {
   let position = [51.0447,-114.0719]
   let mapBounds =  [[0,0],[330,255]];
 
-  const globalToLocal = (index) => { 
+  const globalToLocal = (index) => {
     setUrl(index);
   };
 
@@ -119,7 +120,7 @@ let DisplayMap = () => {
       <EuiText>
       <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
 
-      <br/><br/>
+      <EuiSpacer></EuiSpacer>
       {mapState
       ? <EuiButton id="toggleMap" onClick={() => setMap(false)}>Close Local Map</EuiButton>
       : <></>
@@ -128,7 +129,7 @@ let DisplayMap = () => {
     </EuiPageSideBar>
       {mapState
       ?<div class="leaflet-container">
-      <MapContainer zoom={-5} bounds={mapBounds}>
+      <Map zoom={15} bounds={mapBounds}>
         <ImageOverlay
           url = {Url.floorplans[0].floorplanImage}
           bounds={mapBounds}
@@ -137,10 +138,10 @@ let DisplayMap = () => {
         <DisplayGeoJSONData room={Url.floorplans[0].rooms} />
       </MapContainer>
       </div>
-      :<MapContainer center={position} zoom={13}>
+      :<Map center={position} zoom={13}>
         <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
         <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
-      </MapContainer>
+      </Map>
       }
     </EuiPage>
   )

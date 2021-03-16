@@ -5,7 +5,7 @@
       "type":"Feature",
       "properties": {
         "name":"Room 122",
-        "roomCapacity":10,
+        "roomCapacity":69,
         "currentCapacity":5,
         "riskCalc":1.5,
         "flipC":[[[89.85,78.86],[123.27,78.86],[123.27,82.44],[89.98,82.44],[89.85,78.86]]]
