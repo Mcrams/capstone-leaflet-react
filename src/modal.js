@@ -25,8 +25,8 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
           <p>
             <b>Name: </b>
             {selectedFeature &&
-              selectedFeature.properties &&
-              selectedFeature.properties.name}
+              selectedFeature.roomNumber &&
+              selectedFeature.roomNumber}
           </p>
           <p>
             <b>Room Capacity: </b>
@@ -43,8 +43,8 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
           <p>
             <b>Estimated COVID-19 Risk: </b>
             {selectedFeature &&
-              selectedFeature.properties &&
-              selectedFeature.properties.roomCapacity}
+              selectedFeature.cProb &&
+              selectedFeature.cProb}
           </p>
       </EuiModalBody>
       <EuiModalFooter>
