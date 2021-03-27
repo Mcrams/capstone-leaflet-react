@@ -370,7 +370,7 @@ const createRoom = (event) => {
             <EuiHeaderLinks>
               <EuiHeaderLink isActive onClick={() => {history.push('/dashboard')}}>Dashboard</EuiHeaderLink>
               <EuiHeaderLink onClick={() => {history.push('/')}}>World Map</EuiHeaderLink>
-              <EuiHeaderLink onClick={() => {history.push('/')}}>GitHub</EuiHeaderLink>
+              <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub</EuiHeaderLink>
             </EuiHeaderLinks>
           </EuiHeaderSectionItem>
 

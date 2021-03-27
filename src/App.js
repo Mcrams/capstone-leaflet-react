@@ -127,19 +127,19 @@ let DisplayMap = () => {
       <EuiHeaderSectionItem border="right">
         <EuiHeaderLogo>Elastic</EuiHeaderLogo>
       </EuiHeaderSectionItem>
-
       <EuiHeaderSectionItem>
         <EuiHeaderLinks>
           <EuiHeaderLink onClick={() => {history.push('/dashboard')}}>Dashboard</EuiHeaderLink>
           <EuiHeaderLink isActive onClick={() => {history.push('/')}}>World Map</EuiHeaderLink>
-          <EuiHeaderLink>Local Map</EuiHeaderLink>
+          <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub</EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
 
       <EuiHeaderSectionItemButton>
-        <EuiAvatar name="John Username" size="s" />
+        <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
       </EuiHeaderSectionItemButton>
-      </EuiHeader>
+
+    </EuiHeader>
     <EuiPage>
     <EuiPageSideBar>
       <EuiTitle><h3>ENGO 500 Capstone</h3></EuiTitle>
