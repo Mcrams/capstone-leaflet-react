@@ -24,7 +24,14 @@ import {
   EuiPageSideBar,
   EuiText,
   EuiTitle,
-  EuiSpacer
+  EuiSpacer,
+  EuiHeader,
+  EuiHeaderSectionItem,
+  EuiHeaderSectionItemButton,
+  EuiHeaderLogo,
+  EuiHeaderLinks,
+  EuiHeaderLink,
+  EuiAvatar,
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
@@ -35,7 +42,7 @@ const roomData = require('./geojson.json');
 
 const GetData = (props) => {
 
-  const [buildings,setBuildings] = useState([]);
+const [buildings,setBuildings] = useState([]);
 
   useEffect(() => {
     axios({
@@ -44,13 +51,15 @@ const GetData = (props) => {
   }).then(res => setBuildings(res.data))
   }, [])
 
+  console.log(buildings);
+
   return (
      buildings.map(points => <Marker position={[points.lat,points.lon]} riseOnHover="true">
         <Popup>
          Name: {points.Name} <br /><br />
          <EuiButton onClick={() => {
-           props.changeView(); 
-           props.globalToLocal(points)
+           props.changeView();
+           props.globalToLocal(points.floorplans)
            }}>View</EuiButton>
        </Popup>
      </Marker>)
@@ -58,20 +67,19 @@ const GetData = (props) => {
 
 }
 
-function DisplayGeoJSONData(props) {
+function DisplayGeoJSONData() {
   const [modal, setModal] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState({});
 
   const toggle = () => setModal(!modal);
 
-  const room = props.room;
   return (
   <>
-  {room.map((feature, index) => {
+  {roomData.features.map((feature, index) => {
     return (
       <FeatureGroup key={index}>
         <Popup>
-          <p>{feature.roomNumber}</p>
+          <p>{feature.properties.name}</p>
           <EuiButton id="button"
           onClick={() => {
             toggle(true);
@@ -82,7 +90,7 @@ function DisplayGeoJSONData(props) {
           </EuiButton>
         </Popup>
         <Polygon
-          positions={feature.flipC}
+          positions={feature.geometry.coordinates}
         />
         <ModalExample
         modal={modal}
@@ -112,13 +120,31 @@ let DisplayMap = () => {
   };
 
   const history = useHistory();
-  
+
   return (
+    <>
+    <EuiHeader position='static'>
+      <EuiHeaderSectionItem border="right">
+        <EuiHeaderLogo>Elastic</EuiHeaderLogo>
+      </EuiHeaderSectionItem>
+      <EuiHeaderSectionItem>
+        <EuiHeaderLinks>
+          <EuiHeaderLink onClick={() => {history.push('/dashboard')}}>Dashboard</EuiHeaderLink>
+          <EuiHeaderLink isActive onClick={() => {history.push('/')}}>World Map</EuiHeaderLink>
+          <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub</EuiHeaderLink>
+        </EuiHeaderLinks>
+      </EuiHeaderSectionItem>
+
+      <EuiHeaderSectionItemButton>
+        <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
+      </EuiHeaderSectionItemButton>
+
+    </EuiHeader>
     <EuiPage>
     <EuiPageSideBar>
       <EuiTitle><h3>ENGO 500 Capstone</h3></EuiTitle>
       <EuiText>
-      <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
+      <EuiButton id="button" onClick={() => {}}>Log in or Register</EuiButton>
 
       <EuiSpacer></EuiSpacer>
       {mapState
@@ -131,11 +157,11 @@ let DisplayMap = () => {
       ?<div class="leaflet-container">
       <Map zoom={15} bounds={mapBounds}>
         <ImageOverlay
-          url = {Url.floorplans[0].floorplanImage}
+          url = {Url[0].floorplanImage}
           bounds={mapBounds}
-          zoom={10}
+          zoom={15}
         />
-        <DisplayGeoJSONData room={Url.floorplans[0].rooms} />
+        <DisplayGeoJSONData />
       </Map>
       </div>
       :<Map center={position} zoom={13}>
@@ -144,7 +170,31 @@ let DisplayMap = () => {
       </Map>
       }
     </EuiPage>
+    </>
   )
+
+  // if (mapState === false) {
+  // return (
+  //   <MapContainer center={position} zoom={13}>
+  //     <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+  //     <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
+  //   </MapContainer>
+  // );
+  // }
+  // return (
+  //   <div class="leaflet-container">
+  //   <MapContainer zoom={-5} bounds={mapBounds}>
+  //     <ImageOverlay
+  //     url = {Url[0].floorplanImage}
+  //     bounds={mapBounds}
+  //     zoom={0}
+  //     />
+  //     <DisplayGeoJSONData />
+  //   </MapContainer>
+  //   </div>
+
+  // );
+
 
 
 }
