@@ -62,7 +62,10 @@ const Dashboard = () => {
           axios({
             method: 'get',
             url:`https://engo500.herokuapp.com/user/${userID}`
-        }).then(res => setallBuildings(res.data.buildings))
+        }).then(res => {
+            setallBuildings(res.data.buildings);
+            setroption(res.data.buildings[0].floorplans[0]);
+        });
       }
     },[userID,buildingM])
 
@@ -134,7 +137,7 @@ const createRoom = (event) => {
         data: {
           roomNumber: roomN,
           floorplanID : roption,
-          RoomWidth: width,
+          roomWidth: width,
           roomHeight: height,
           roomLength: length,
           flipC: coords,
