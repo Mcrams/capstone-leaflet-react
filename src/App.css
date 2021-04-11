@@ -6,3 +6,14 @@
   height: 95vh;
   width: 100%;
 }
+
+.leaflet-popup-content-wrapper {
+  
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  }
+.leaflet-popup-content-wrapper a {
+  color:rgba(255,255,255,0.5);
+  }

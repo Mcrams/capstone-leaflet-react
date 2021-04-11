@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'
+import styles from './App.css';
 import Login from './loginComponents/login';
 import Dashboard from './loginComponents/dashboard';
 import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import axios from 'axios'
+import iconV from './iconV.svg'
+import user from './user.svg'
 
 import {
   Map,
@@ -16,6 +18,7 @@ import {
   FeatureGroup,
   useMapEvent,
   useMapEvents,
+  useMap,
 } from 'react-leaflet'
 
 import {
@@ -28,10 +31,12 @@ import {
   EuiHeader,
   EuiHeaderSectionItem,
   EuiHeaderSectionItemButton,
-  EuiHeaderLogo,
+  logoMaps,
   EuiHeaderLinks,
   EuiHeaderLink,
   EuiAvatar,
+  EuiIcon,
+  EuiHeaderLogo,
 } from '@elastic/eui';
 
 import ModalExample from "./modal.js"
@@ -51,16 +56,14 @@ const [buildings,setBuildings] = useState([]);
   }).then(res => setBuildings(res.data))
   }, [])
 
-  console.log(buildings);
-
   return (
      buildings.map(points => <Marker position={[points.lat,points.lon]} riseOnHover="true">
-        <Popup>
-         Name: {points.Name} <br /><br />
-         <EuiButton onClick={() => {
+        <Popup className={styles.custom}>
+         <EuiText>{points.Name}</EuiText>
+         <EuiButton size="s" fill="false" onClick={() => {
            props.changeView(); 
            props.globalToLocal(points)
-           }}>View</EuiButton>
+           }}>View Rooms</EuiButton>
        </Popup>
      </Marker>)
   )
@@ -76,27 +79,44 @@ function DisplayGeoJSONData(props) {
   const room = props.room;
   return (
   <>
+   <ModalExample
+        modal={modal}
+        toggle={toggle}
+        selectedFeature={selectedFeature}
+        />
   {room.map((feature, index) => {
     return (
       <FeatureGroup key={index}>
-        <Popup>
-          <p>{feature.roomNumber}</p>
-          <EuiButton id="button"
+
+        <Polygon
+          positions={feature.flipC}
           onClick={() => {
             toggle(true);
             setSelectedFeature(feature);
           }}
-          >
-          More Info
-          </EuiButton>
-        </Popup>
-        <Polygon
-          positions={feature.flipC}
-        />
-        <ModalExample
-        modal={modal}
-        toggle={toggle}
-        selectedFeature={selectedFeature}
+          onMouseOver={(e) => {
+             let layer = e.target;
+            layer.setStyle({
+              weight: 2,
+              color: '#E3242B',
+              dashArray: '',
+              fillOpacity: 0.7
+            });
+          }}
+    
+          onmouseout={(e) => {
+            let layer = e.target;
+            layer.setStyle({
+              color: "#3388FF",
+              strokeOpacity: 1,
+              strokeWidth: 3,
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              fill: "#3388FF",
+              fillOpacity: 0.2,
+            });
+          }}
+          
         />
       </FeatureGroup>
     );
@@ -125,34 +145,29 @@ let DisplayMap = () => {
     <>
     <EuiHeader position='static'>
       <EuiHeaderSectionItem border="right">
-        <EuiHeaderLogo>Elastic</EuiHeaderLogo>
+      <EuiIcon type={iconV} size="xxl"></EuiIcon><EuiTitle size="s"><h4>COVID-19 Tracker</h4></EuiTitle>
       </EuiHeaderSectionItem>
       <EuiHeaderSectionItem>
         <EuiHeaderLinks>
-          <EuiHeaderLink onClick={() => {history.push('/dashboard')}}>Dashboard</EuiHeaderLink>
-          <EuiHeaderLink isActive onClick={() => {history.push('/')}}>World Map</EuiHeaderLink>
-          <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub</EuiHeaderLink>
+          <EuiHeaderLink onClick={() => {history.push('/dashboard')}}>Dashboard  <EuiIcon type="dashboardApp"></EuiIcon></EuiHeaderLink>
+          <EuiHeaderLink isActive onClick={() => {setMap(false);history.push('/')}}>World Map  <EuiIcon type="gisApp"></EuiIcon></EuiHeaderLink>
+          <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub  <EuiIcon type="logoGithub"></EuiIcon></EuiHeaderLink>
+        
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
-
       <EuiHeaderSectionItemButton>
-        <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
+      <EuiAvatar
+      size="m"
+      name="Cat"
+      imageUrl={user}
+      onClick={() => {history.push('/login')}}
+      color = "#000000"
+    />
+      
+      
       </EuiHeaderSectionItemButton>
 
     </EuiHeader>
-    <EuiPage>
-    <EuiPageSideBar>
-      <EuiTitle><h3>ENGO 500 Capstone</h3></EuiTitle>
-      <EuiText>
-      <EuiButton id="button" onClick={() => {}}>Log in or Register</EuiButton>
-
-      <EuiSpacer></EuiSpacer>
-      {mapState
-      ? <EuiButton id="toggleMap" onClick={() => setMap(false)}>Close Local Map</EuiButton>
-      : <></>
-      }
-      </EuiText>
-    </EuiPageSideBar>
       {mapState
       ?<div class="leaflet-container">
       <Map zoom={15} bounds={mapBounds}>
@@ -162,38 +177,16 @@ let DisplayMap = () => {
           zoom={10}
         />
         <DisplayGeoJSONData room={Url.floorplans[0].rooms} />
+
       </Map>
       </div>
       :<Map center={position} zoom={13}>
-        <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+        <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://api.mapbox.com/styles/v1/capstonegeo/cknckswvq135g18mjrr3rrx5s/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiY2Fwc3RvbmVnZW8iLCJhIjoiY2tuY2p1NWt6MTd4MTJ1bWw0ODk4YmN0aiJ9.wwv4wdIQbeUt41f1htvb4w"/>
         <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
       </Map>
       }
-    </EuiPage>
     </>
   )
-
-  // if (mapState === false) {
-  // return (
-  //   <MapContainer center={position} zoom={13}>
-  //     <TileLayer attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-  //     <GetData changeView={() => setMap(true)} globalToLocal={globalToLocal}></GetData>
-  //   </MapContainer>
-  // );
-  // }
-  // return (
-  //   <div class="leaflet-container">
-  //   <MapContainer zoom={-5} bounds={mapBounds}>
-  //     <ImageOverlay
-  //     url = {Url[0].floorplanImage}
-  //     bounds={mapBounds}
-  //     zoom={0}
-  //     />
-  //     <DisplayGeoJSONData />
-  //   </MapContainer>
-  //   </div>
-
-  // );
 
 
 
