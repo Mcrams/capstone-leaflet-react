@@ -7,7 +7,16 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiOverlayMask,
+  EuiFlexItem,
+  EuiFlexGrid,
+  EuiIcon,
+  EuiTitle,
+  EuiStat
+
 } from '@elastic/eui';
+
+import clock from './clock.svg'
+
 
 
 const ModalExample = ({ modal, toggle, selectedFeature }) => {
@@ -17,42 +26,36 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
 
   if (modal) {
     modalBox =
-    <EuiOverlayMask onClick={toggle}>
       <EuiModal onClose={toggle}>
       <EuiModalHeader>
-        <EuiModalHeaderTitle>Room Information</EuiModalHeaderTitle>
+        <EuiModalHeaderTitle style={{margin:"auto"}}>{selectedFeature.roomNumber}</EuiModalHeaderTitle>
       </EuiModalHeader>
       <EuiModalBody>
-          <p>
-            <b>Name: </b>
-            {selectedFeature &&
-              selectedFeature.roomNumber &&
-              selectedFeature.roomNumber}
-          </p>
-          <p>
-            <b>Room Occupants Wearing A Mask : </b>
-            {selectedFeature &&
-              selectedFeature.totalMask &&
-              selectedFeature.totalMask}
-          </p>
-          <p>
-            <b>Room Occupants Without A Mask: </b>
-            {selectedFeature &&
-              selectedFeature.totalWMask &&
-              selectedFeature.totalWMask}
-          </p>
-          <p>
-            <b>Total Occupants: </b>
-            {total &&
-              total &&
-              total}
-          </p>
-          <p>
-            <b>Estimated COVID-19 Risk: </b>
-            {selectedFeature &&
-              selectedFeature.cProb &&
-              selectedFeature.cProb}
-          </p>
+        <div style={{margin:"auto"}}>
+        <EuiFlexGrid columns={2}>
+      <EuiFlexItem>
+        <div>
+          <EuiStat title={selectedFeature.totalMask} textAlign="center" description="Occupants Wearing Masks" reverse descriptionElement="h3" titleColor ="secondary"></EuiStat>
+        </div>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <div>
+        <EuiStat title={selectedFeature.totalWMask} textAlign="center" description="Occupants Without Masks" reverse descriptionElement="h3" titleColor="danger"></EuiStat>
+        </div>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <div>
+        <EuiStat title={(selectedFeature.timeCurr)} textAlign="center" description="Hours Since Last Cleaned" reverse descriptionElement="h3" titleColor ="secondary"></EuiStat>
+        </div>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <div>
+        <EuiStat title={`% ${(selectedFeature.cProb*100).toFixed(3)}`} textAlign="center" description="COVID-19 Risk" reverse descriptionElement="h3" titleColor="danger"></EuiStat>
+        </div>
+      </EuiFlexItem>
+      </EuiFlexGrid>
+        </div>
+        
       </EuiModalBody>
       <EuiModalFooter>
         <EuiButton onClick={toggle} fill>
@@ -60,7 +63,6 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
         </EuiButton>
       </EuiModalFooter>
       </EuiModal>
-    </EuiOverlayMask>
   }
 
   return (

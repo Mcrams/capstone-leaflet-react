@@ -3,6 +3,8 @@ import axios from 'axios';
 import MapModal from './modalMapDraw';
 import { useHistory } from 'react-router-dom';
 import '@elastic/eui/dist/eui_theme_light.css';
+import iconV from '../iconV.svg';
+import user from '../user.svg';
 import {
     EuiPage,
     EuiPageBody,
@@ -406,18 +408,24 @@ const createRoom = (event) => {
         <>
         <EuiHeader position='static'>
           <EuiHeaderSectionItem border="right">
-            <EuiHeaderLogo>Elastic</EuiHeaderLogo>
+          <EuiIcon type={iconV} size="xxl"></EuiIcon><EuiTitle size="s"><h4>COVID-19 Tracker</h4></EuiTitle>
           </EuiHeaderSectionItem>
           <EuiHeaderSectionItem>
             <EuiHeaderLinks>
-              <EuiHeaderLink isActive onClick={() => {history.push('/dashboard')}}>Dashboard</EuiHeaderLink>
-              <EuiHeaderLink onClick={() => {history.push('/')}}>World Map</EuiHeaderLink>
-              <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub</EuiHeaderLink>
+            <EuiHeaderLink onClick={() => {history.push('/dashboard')}}>Dashboard  <EuiIcon type="dashboardApp"></EuiIcon></EuiHeaderLink>
+            <EuiHeaderLink isActive onClick={() => {history.push('/')}}>World Map  <EuiIcon type="gisApp"></EuiIcon></EuiHeaderLink>
+            <EuiHeaderLink href="https://github.com/ENGO500/react-leaflet">GitHub  <EuiIcon type="logoGithub"></EuiIcon></EuiHeaderLink>
             </EuiHeaderLinks>
           </EuiHeaderSectionItem>
 
           <EuiHeaderSectionItemButton>
-            <EuiButton id="button" onClick={() => {history.push('/login')}}>Log in or Register</EuiButton>
+          <EuiAvatar
+      size="m"
+      name="Cat"
+      imageUrl={user}
+      onClick={() => {history.push('/login')}}
+      color = "#000000"
+    />
           </EuiHeaderSectionItemButton>
 
         </EuiHeader>

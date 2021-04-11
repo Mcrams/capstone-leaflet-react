@@ -89,7 +89,7 @@ const MapModal = ({ visibility, toggle, polyCoords, onPolyConfirm }) => {
           <div id="flyMapContainer">
             <Map bounds={mapBounds} zoom={13}>
               <ImageOverlay
-                url ={"https://engo500.s3-us-west-2.amazonaws.com/0001.jpg"}
+                url ={"https://engo500.s3.us-west-2.amazonaws.com/0001.jpg"}
                 bounds={mapBounds}
                 zoom={15}
               />
