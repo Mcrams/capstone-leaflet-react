@@ -13,6 +13,7 @@ import {
 const ModalExample = ({ modal, toggle, selectedFeature }) => {
 
   let modalBox;
+  let total = selectedFeature.totalMask+selectedFeature.totalWMask;
 
   if (modal) {
     modalBox =
@@ -29,16 +30,22 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
               selectedFeature.roomNumber}
           </p>
           <p>
-            <b>Room Capacity: </b>
+            <b>Room Occupants Wearing A Mask : </b>
             {selectedFeature &&
-              selectedFeature.properties &&
-              selectedFeature.properties.roomCapacity}
+              selectedFeature.totalMask &&
+              selectedFeature.totalMask}
           </p>
           <p>
-            <b>Current Capacity: </b>
+            <b>Room Occupants Without A Mask: </b>
             {selectedFeature &&
-              selectedFeature.properties &&
-              selectedFeature.properties.roomCapacity}
+              selectedFeature.totalWMask &&
+              selectedFeature.totalWMask}
+          </p>
+          <p>
+            <b>Total Occupants: </b>
+            {total &&
+              total &&
+              total}
           </p>
           <p>
             <b>Estimated COVID-19 Risk: </b>

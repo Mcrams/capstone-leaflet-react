@@ -58,8 +58,8 @@ const [buildings,setBuildings] = useState([]);
         <Popup>
          Name: {points.Name} <br /><br />
          <EuiButton onClick={() => {
-           props.changeView();
-           props.globalToLocal(points.floorplans)
+           props.changeView(); 
+           props.globalToLocal(points)
            }}>View</EuiButton>
        </Popup>
      </Marker>)
@@ -67,19 +67,20 @@ const [buildings,setBuildings] = useState([]);
 
 }
 
-function DisplayGeoJSONData() {
+function DisplayGeoJSONData(props) {
   const [modal, setModal] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState({});
 
   const toggle = () => setModal(!modal);
 
+  const room = props.room;
   return (
   <>
-  {roomData.features.map((feature, index) => {
+  {room.map((feature, index) => {
     return (
       <FeatureGroup key={index}>
         <Popup>
-          <p>{feature.properties.name}</p>
+          <p>{feature.roomNumber}</p>
           <EuiButton id="button"
           onClick={() => {
             toggle(true);
@@ -90,7 +91,7 @@ function DisplayGeoJSONData() {
           </EuiButton>
         </Popup>
         <Polygon
-          positions={feature.geometry.coordinates}
+          positions={feature.flipC}
         />
         <ModalExample
         modal={modal}
@@ -103,7 +104,6 @@ function DisplayGeoJSONData() {
   </>
   );
 }
-
 
 
 
@@ -157,11 +157,11 @@ let DisplayMap = () => {
       ?<div class="leaflet-container">
       <Map zoom={15} bounds={mapBounds}>
         <ImageOverlay
-          url = {Url[0].floorplanImage}
+          url = {Url.floorplans[0].floorplanImage}
           bounds={mapBounds}
-          zoom={15}
+          zoom={10}
         />
-        <DisplayGeoJSONData />
+        <DisplayGeoJSONData room={Url.floorplans[0].rooms} />
       </Map>
       </div>
       :<Map center={position} zoom={13}>

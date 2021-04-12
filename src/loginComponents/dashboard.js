@@ -88,9 +88,13 @@ const Dashboard = () => {
 
     useEffect(() => {
         const user = JSON.parse(window.localStorage.getItem('loggedInUser'))
+        if (!user) {
+          history.push('/');
+        } else {
         setUserID(user.data.id)
         setUserName(user.config.data.username)
         setToken(user.data.AcessToken)
+       }
       }, [])
 
       useEffect(() => {
@@ -98,7 +102,10 @@ const Dashboard = () => {
           axios({
             method: 'get',
             url:`https://engo500.herokuapp.com/user/${userID}`
-        }).then(res => setallBuildings(res.data.buildings))
+        }).then(res => {
+            setallBuildings(res.data.buildings);
+            setroption(res.data.buildings[0].floorplans[0]);
+        });
       }
     },[userID,buildingM])
 
@@ -170,7 +177,7 @@ const createRoom = (event) => {
         data: {
           roomNumber: roomN,
           floorplanID : roption,
-          RoomWidth: width,
+          roomWidth: width,
           roomHeight: height,
           roomLength: length,
           flipC: coords,
@@ -352,6 +359,41 @@ const createRoom = (event) => {
         <EuiSpacer></EuiSpacer>
 
         <EuiButton type="submit" fill>Create Room</EuiButton>
+        </EuiForm>
+        </EuiCard>
+        </EuiFlexItem>
+      </Fragment>
+    )
+  },
+  {
+    id: 'clear--id',
+    name: 'Clear Risk Values',
+    content: (
+      <Fragment>
+        <EuiFlexItem>
+        <EuiCard style={{maxWidth:'100%', justifyContent:'center',}}>
+        {(() => {
+            switch (rM) {
+            case "success" : return <EuiCallOut title="Room Created."color="success" iconType="documentEdit"></EuiCallOut>
+            case "error" : return <EuiCallOut title="Something went wrong. Please try again."color="danger" iconType="alert"></EuiCallOut>
+            default: return <></>
+            }
+        })()}
+        <EuiText><h1>Clear COVID Risk Values</h1></EuiText>
+        <EuiSpacer></EuiSpacer>
+        <EuiForm component="form" >
+        <EuiText textAlign="left">
+          <p>Select a room below to manually reset it's current COVID risk.</p>
+          <p>This assumes that the room has already been cleaned/decontaminated:</p>
+        </EuiText>
+        <EuiSelect
+             options={roptions}
+             value={roption}
+             onChange={(e) =>  setroption(e.target.value)}
+             />
+        <EuiSpacer></EuiSpacer>
+
+        <EuiButton type="submit" color="danger" fill>Reset Room Risk</EuiButton>
         </EuiForm>
         </EuiCard>
         </EuiFlexItem>
