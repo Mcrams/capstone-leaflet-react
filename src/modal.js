@@ -45,7 +45,7 @@ const ModalExample = ({ modal, toggle, selectedFeature }) => {
       </EuiFlexItem>
       <EuiFlexItem>
         <div>
-        <EuiStat title={(selectedFeature.timeCurr)} textAlign="center" description="Hours Since Last Cleaned" reverse descriptionElement="h3" titleColor ="secondary"></EuiStat>
+        <EuiStat title={`${parseFloat(selectedFeature.timeCurr).toFixed(3)}`} textAlign="center" description="Hours Since Last Cleaned" reverse descriptionElement="h3" titleColor ="secondary"></EuiStat>
         </div>
       </EuiFlexItem>
       <EuiFlexItem>
