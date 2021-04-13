@@ -24,7 +24,7 @@ import {
 import './modalMapDraw.css';
 
 
-const MapModal = ({ visibility, toggle, polyCoords, onPolyConfirm }) => {
+const MapModal = ({ visibility, toggle, polyCoords, onPolyConfirm, image }) => {
 
   let flyoutContent;
 
@@ -89,7 +89,7 @@ const MapModal = ({ visibility, toggle, polyCoords, onPolyConfirm }) => {
           <div id="flyMapContainer">
             <Map bounds={mapBounds} zoom={13}>
               <ImageOverlay
-                url ={"https://engo500.s3.us-west-2.amazonaws.com/0001.jpg"}
+                url ={image}
                 bounds={mapBounds}
                 zoom={15}
               />
