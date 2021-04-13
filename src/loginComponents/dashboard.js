@@ -77,6 +77,8 @@ const Dashboard = () => {
     const [boption, setboption] = useState('')
     const [files, setFiles] = useState({})
     const [fpM, setfpM] = useState('')
+    const [sFP, setsFP] = useState('')
+    const [FPS, setFPS] = useState('')
 
     //Room States
     const [roption, setroption] = useState('')
@@ -86,6 +88,7 @@ const Dashboard = () => {
     const [roomN,setroomN] = useState('')
     const [coords, setcoords] = useState([])
     const [rM, setrM] = useState('')
+    const [nR, setnR] = useState('')
 
 
     useEffect(() => {
@@ -107,6 +110,7 @@ const Dashboard = () => {
         }).then(res => {
             setallBuildings(res.data.buildings);
             setroption(res.data.buildings[0].floorplans[0]);
+            setsFP(res.data.buildings[0]._id);
         });
       }
     },[userID,buildingM])
@@ -117,7 +121,8 @@ const Dashboard = () => {
     //Building select options
     const options = allBuildings.map(building => { return {value: building._id, text: building.Name} });
 
-    const roptions = allBuildings.map(building => { return {value: building.floorplans[0], text: building.Name} });
+    const roptions = allBuildings.map(building => { return {value: [building.floorplans[0],building._id], text: building.Name} });
+
 
     //Building POST function
     const createBuilding = (event) => {
@@ -137,7 +142,7 @@ const Dashboard = () => {
             setNewBuilding('')
             setNewLat('')
             setNewLong('')
-            setTimeout(()=>setbuildingM(''),3000)
+            setTimeout(()=>setbuildingM(''),20000)
         }).catch(error => {
             setbuildingM('error')
             setNewBuilding('')
@@ -178,13 +183,14 @@ const createRoom = (event) => {
         headers: {'auth-token': token},
         data: {
           roomNumber: roomN,
-          floorplanID : roption,
+          floorplanID : roption[0],
           roomWidth: width,
           roomHeight: height,
           roomLength: length,
           flipC: coords,
         }
     }).then(res => {
+      setnR(res.data._id);
         setrM('success')
         setW('')
         setl('')
@@ -202,6 +208,20 @@ const createRoom = (event) => {
         setTimeout(()=>setrM(''),3000)
       })
     }
+
+  //Find Floorplan Image
+  const findPlan = () => {
+
+    axios({
+      method: 'get',
+      url:`https://engo500.herokuapp.com/building/${sFP}`
+  }).then(res => {
+      setFPS(res.data.floorplans[0].floorplanImage)
+  });
+
+  toggle();
+
+  }
 
   const tabs = [
   {
@@ -296,7 +316,7 @@ const createRoom = (event) => {
         <EuiCard style={{maxWidth:'100%', justifyContent:'center',}}>
         {(() => {
             switch (rM) {
-            case "success" : return <EuiCallOut title="Room Created."color="success" iconType="documentEdit"></EuiCallOut>
+            case "success" : return <EuiCallOut title="Room Created."color="success" iconType="documentEdit"><p>The created Room ID is: {nR}</p></EuiCallOut>
             case "error" : return <EuiCallOut title="Something went wrong. Please try again."color="danger" iconType="alert"></EuiCallOut>
             default: return <></>
             }
@@ -307,7 +327,11 @@ const createRoom = (event) => {
         <EuiSelect
              options={roptions}
              value={roption}
-             onChange={(e) =>  setroption(e.target.value)}
+             onChange={(e) =>  {
+               let temp = e.target.value.split(",")
+               setroption(temp)
+               setsFP(temp[1])
+             }}
              />
         <EuiSpacer></EuiSpacer>
         <EuiFieldText
@@ -340,13 +364,14 @@ const createRoom = (event) => {
         <EuiSpacer></EuiSpacer>
 
         <EuiButton id="roomButton" onClick={() => {
-          toggle();
+          findPlan();
         }}>Draw Room Coordinates</EuiButton>
 
         <MapModal
         visibility={isFlyoutVisible}
         toggle={toggle}
         polyCoords={polyCoords}
+        image = {FPS}
         onPolyConfirm={() => {setcoords(roomPoly)}}
         />
 
